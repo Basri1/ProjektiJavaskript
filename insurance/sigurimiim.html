@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polisa ime</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>    
+    <div>
+        <h1>Polisa ime</h1>
+        <p>Këtu mund të shikoni, modifikoni ose fshini polisat tuaja të sigurimit.</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Numri i Polisës</th>
+                    <th>Tipi</th>
+                    <th>Data e Skadencës</th>
+                    <th>Veprimi</th>
+                </tr>
+            </thead>
+            <tbody id="policiesTableBody">
+                <tr>
+                    <td>12345</td>
+                    <td>Auto</td>
+                    <td>2024-12-31</td>
+                    <td>
+                        <button onclick="editPolicy('12345')" class="btn btn-primary">Modifikoj</button>
+                        <button onclick="updatePolicy('12345')" class="btn btn-success">Azhurnim</button>
+                        <button onclick="deletePolicy('12345')" class="btn btn-danger">Nxjerr</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal" id="editPolicyModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edito Polisën</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPolicyForm">
+                        <input type="hidden" id="editPolicyId">
+                        <div class="form-group">
+                            <label for="editPolicyType">Tipi i Polisës</label>
+                            <input type="text" class="form-control" id="editPolicyType" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editPolicyExpiryDate">Data e Skadencës</label>
+                            <input type="date" class="form-control" id="editPolicyExpiryDate" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" onclick="updatePolicy()" class="btn btn-primary">Ruaj Ndryshimet</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let policies = [
+    { id: '12345', type: 'Auto', expiryDate: '2024-12-31' }
+
+];
+
+function openEditModal(policyId) {
+    const policy = policies.find(p => p.id === policyId);
+    if (policy) {
+        document.getElementById('editPolicyId').value = policy.id;
+        document.getElementById('editPolicyType').value = policy.type;
+        document.getElementById('editPolicyExpiryDate').value = policy.expiryDate;
+        $('#editPolicyModal').modal('show');
+    }
+}
+
+function updatePolicy() {
+    const id = document.getElementById('editPolicyId').value;
+    const type = document.getElementById('editPolicyType').value;
+    const expiryDate = document.getElementById('editPolicyExpiryDate').value;
+
+    const policyIndex = policies.findIndex(p => p.id === id);
+    if (policyIndex !== -1) {
+        policies[policyIndex] = { id, type, expiryDate };
+        refreshPoliciesTable();
+    }
+
+    $('#editPolicyModal').modal('hide');
+}
+
+function deletePolicy(policyId) {
+    policies = policies.filter(p => p.id !== policyId);
+    refreshPoliciesTable();
+}
+
+function refreshPoliciesTable() {
+    const tableBody = document.getElementById('policiesTableBody');
+    tableBody.innerHTML = '';
+
+    policies.forEach(policy => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${policy.id}</td>
+            <td>${policy.type}</td>
+            <td>${policy.expiryDate}</td>
+            <td>
+                <button onclick="openEditModal('${policy.id}')" class="btn btn-primary">Modifikoj</button>
+                <button onclick="deletePolicy('${policy.id}')" class="btn btn-danger">Nxjerr</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+document.addEventListener('DOMContentLoaded', refreshPoliciesTable);
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
